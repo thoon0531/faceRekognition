@@ -1,6 +1,8 @@
 package com.rekog.faceRekognition.service;
 
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.rekognition.RekognitionClient;
@@ -22,6 +24,7 @@ public class FaceService {
         Region region = Region.AP_NORTHEAST_2;
         RekognitionClient rekClient = RekognitionClient.builder()
                 .region(region)
+                .credentialsProvider(SystemPropertyCredentialsProvider.create())
                 .build();
 
 

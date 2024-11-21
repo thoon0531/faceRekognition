@@ -7,8 +7,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
 
 
@@ -46,9 +48,38 @@ public class ImageService {
             throw new ImageFormatNotSupportedException();
         }
 
+        //Use current time as image file name
         String newFileName = Long.toString(System.currentTimeMillis()) + format;
         file = new File(absolutePath + path + "/" + newFileName);
         image.transferTo(file);
+
+        return absolutePath + path + "/" + newFileName;
+    }
+
+    public String save(String base64) throws IOException {
+        if(base64.isEmpty()){
+            throw new EmptyImageException();
+        }
+        //Use current date as image file directory
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String date = sdf.format(new Date());
+
+        String absolutePath = System.getProperty("user.dir") + "\\";
+        String path = "images\\" + date;
+        File file = new File(path);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+
+        //Use current time as image file name
+        String newFileName = Long.toString(System.currentTimeMillis()) + ".png";
+        file = new File(absolutePath + path + "/" + newFileName);
+
+        //System.out.println(base64);
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            fileOutputStream.write(imageBytes);
+        }
 
         return absolutePath + path + "/" + newFileName;
     }
